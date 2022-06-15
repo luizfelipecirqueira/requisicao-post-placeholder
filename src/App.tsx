@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {Post} from './types/Post';
+import { Post } from './types/Post';
 
 const Requisicao = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -11,8 +11,10 @@ const Requisicao = () => {
   }, []);
 
   const carregarPosts = async () => {
+    setLoading(true);
     let response = await fetch('https://jsonplaceholder.typicode.com/posts');
     let json = await response.json();
+    setLoading(false);
     setPosts(json);
   }
 
@@ -20,7 +22,7 @@ const Requisicao = () => {
 
     <div>
       <br />
-      
+
 
       <br />
 
@@ -28,21 +30,32 @@ const Requisicao = () => {
         <div>Carregando...</div>
       }
 
+      <fieldset>
+        
+        <legend>Adicionar Novo Post</legend>
+
+        <input type="text" placeholder="Digite um título" />
+
+        <textarea></textarea>
+
+        <button>Adicionar</button>
+      </fieldset>
+
       {!loading &&
         <div>
 
-        <p>Total de Filmes: {posts.length}</p>
+          <p>Total de Filmes: {posts.length}</p>
 
-        <div className="filmes">
-          {posts.map((item, index) => (
-            <div key={index}>
-              <h4>{item.title}</h4>
-              <small>#{item.id} - Usuário: {item.userId}</small>
-              <p>{item.body}</p>
-            </div>
-          ))}
+          <div className="filmes">
+            {posts.map((item, index) => (
+              <div key={index}>
+                <h4>{item.title}</h4>
+                <small>#{item.id} - Usuário: {item.userId}</small>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
       }
       {!loading && posts.length === 0 &&
         <div>Não há posts para exibir</div>
