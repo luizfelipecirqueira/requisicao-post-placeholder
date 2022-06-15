@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Post } from './types/Post';
 
 const Requisicao = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [addBodyText, setAddBodyText] = useState('');
+  const [addTitleText, setAddTitleText] = useState('');
 
   useEffect(() => {
     carregarPosts();
@@ -16,6 +18,18 @@ const Requisicao = () => {
     let json = await response.json();
     setLoading(false);
     setPosts(json);
+  }
+
+  const handleAddTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setAddTitleText(e.target.value);
+  }
+
+  const handleAddBodyChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setAddBodyText(e.target.value);
+  }
+
+  const handleAddClick = () => {
+    alert(addTitleText + ' ' +  addBodyText);
   }
 
   return (
@@ -31,14 +45,15 @@ const Requisicao = () => {
       }
 
       <fieldset>
-        
+
         <legend>Adicionar Novo Post</legend>
 
-        <input type="text" placeholder="Digite um título" />
+        <input type="text" placeholder="Digite um título" value={addTitleText} onChange={handleAddTitleChange} />
+        <br /><br />
 
-        <textarea></textarea>
+        <textarea value={addBodyText} onChange={handleAddBodyChange}></textarea>
 
-        <button>Adicionar</button>
+        <br /><br /><button onClick={handleAddClick}>Adicionar</button>
       </fieldset>
 
       {!loading &&
