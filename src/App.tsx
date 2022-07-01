@@ -1,12 +1,13 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { PostForm } from './components/PostForm';
+import { PostItem } from './components/PostItem';
 import { Post } from './types/Post';
+
 
 const Requisicao = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const [addBodyText, setAddBodyText] = useState('');
-  const [addTitleText, setAddTitleText] = useState('');
 
   useEffect(() => {
     carregarPosts();
@@ -20,39 +21,25 @@ const Requisicao = () => {
     setPosts(json);
   }
 
-  const handleAddTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setAddTitleText(e.target.value);
-  }
-
-  const handleAddBodyChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setAddBodyText(e.target.value);
-  }
-
-  const handleAddClick  = async () => {
-    if(addTitleText && addBodyText){
-      let response = await fetch("https://jsonplaceholder.typicode.com/posts", {
-        method: 'POST',
-        body: JSON.stringify({
-          title: addTitleText,
-          body: addBodyText,
-          userId: 1
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      let json = await response.json();
-
-      if(json.id){
-        alert('Post adicionado com sucesso!');
+  const handleAddPost = async (title: string, body: string) => {
+    let response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: 'POST',
+      body: JSON.stringify({
+        title: title,
+        body: body,
+        userId: 1
+      }),
+      headers: {
+        'Content-Type': 'application/json'
       }
-      else{
-        alert('Ocorreu algum erro!');
-      }
+    });
+    let json = await response.json();
+
+    if (json.id) {
+      alert('Post adicionado com sucesso!');
     }
-
-    else{
-      alert('Preencha os dados!')
+    else {
+      alert('Ocorreu algum erro!');
     }
   }
 
@@ -68,17 +55,7 @@ const Requisicao = () => {
         <div>Carregando...</div>
       }
 
-      <fieldset>
-
-        <legend>Adicionar Novo Post</legend>
-
-        <input type="text" placeholder="Digite um título" value={addTitleText} onChange={handleAddTitleChange} />
-        <br /><br />
-
-        <textarea value={addBodyText} onChange={handleAddBodyChange}></textarea>
-
-        <br /><br /><button onClick={handleAddClick}>Adicionar</button>
-      </fieldset>
+      <PostForm onAdd={handleAddPost} />
 
       {!loading &&
         <div>
@@ -86,12 +63,8 @@ const Requisicao = () => {
           <p>Total de Filmes: {posts.length}</p>
 
           <div className="filmes">
-            {posts.map((item, index) => (
-              <div key={index}>
-                <h4>{item.title}</h4>
-                <small>#{item.id} - Usuário: {item.userId}</small>
-                <p>{item.body}</p>
-              </div>
+            {posts.map((item) => (
+              <PostItem data={item} />
             ))}
           </div>
         </div>
