@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { PostForm } from './components/PostForm';
 import { PostItem } from './components/PostItem';
 import { Post } from './types/Post';
+import { api } from './api';
 
 
-const Requisicao = () => {
+const App = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -15,31 +16,18 @@ const Requisicao = () => {
 
   const carregarPosts = async () => {
     setLoading(true);
-    let response = await fetch('https://jsonplaceholder.typicode.com/posts');
-    let json = await response.json();
+    let json = await api.getAllPosts();
     setLoading(false);
     setPosts(json);
   }
 
   const handleAddPost = async (title: string, body: string) => {
-    let response = await fetch("https://jsonplaceholder.typicode.com/posts", {
-      method: 'POST',
-      body: JSON.stringify({
-        title: title,
-        body: body,
-        userId: 1
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    let json = await response.json();
-
-    if (json.id) {
-      alert('Post adicionado com sucesso!');
+    let json = await api.addNewPost(title, body, 1);
+    if(json.id){
+      alert("Post adicionado com sucesso");
     }
-    else {
-      alert('Ocorreu algum erro!');
+    else{
+      alert("Ocorreu algum erro!");
     }
   }
 
@@ -75,6 +63,6 @@ const Requisicao = () => {
     </div>
 
   );
-}
+};
 
-export default Requisicao;
+export default App;
